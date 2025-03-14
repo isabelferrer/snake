@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Snake Retro 🐍🎮</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,6 +15,7 @@
             flex-direction: column; 
             align-items: center; 
             margin-top: 15px; 
+            user-select: none; /* Evita selección accidental */
         }
         .row { display: flex; justify-content: center; margin: 5px 0; }
         .btn { 
@@ -23,6 +24,7 @@
             background: #444; color: white; 
             border: none; cursor: pointer; 
             border-radius: 10px;
+            touch-action: manipulation; /* Evita zoom en móvil */
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -36,12 +38,12 @@
     <!-- Controles táctiles (fuera del canvas) -->
     <div class="controls">
         <div class="row">
-            <button class="btn" onclick="changeDirection('up')">⬆️</button>
+            <button class="btn" ontouchstart="changeDirection('up')">⬆️</button>
         </div>
         <div class="row">
-            <button class="btn" onclick="changeDirection('left')">⬅️</button>
-            <button class="btn" onclick="changeDirection('down')">⬇️</button>
-            <button class="btn" onclick="changeDirection('right')">➡️</button>
+            <button class="btn" ontouchstart="changeDirection('left')">⬅️</button>
+            <button class="btn" ontouchstart="changeDirection('down')">⬇️</button>
+            <button class="btn" ontouchstart="changeDirection('right')">➡️</button>
         </div>
     </div>
 
@@ -125,8 +127,8 @@
             else if (dir === "right" && direction !== "LEFT") direction = "RIGHT";
         }
 
-        // Reducimos la velocidad para mejor experiencia (de 150ms a 200ms)
-        let game = setInterval(draw, 200);
+        // Reducimos la velocidad para mejor experiencia (de 200ms a 250ms)
+        let game = setInterval(draw, 250);
     </script>
 
 </body>
