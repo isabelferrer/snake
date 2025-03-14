@@ -9,19 +9,20 @@
         body { font-family: 'Press Start 2P', cursive; text-align: center; background: #222; color: white; }
         canvas { display: block; margin: 20px auto; background: url('fondo.png') center/cover; border: 4px solid #fff; }
         
-        /* Ajuste de controles táctiles */
-        .controls { display: flex; justify-content: center; margin-top: 20px; }
-        .btn { width: 60px; height: 60px; margin: 5px; font-size: 24px; background: #444; color: white; border: none; cursor: pointer; }
-        
-        /* Ajuste para mejor posición en móviles */
-        .mobile-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-            top: 55%; /* Subimos los controles */
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* Ajuste de controles táctiles (fuera del canvas) */
+        .controls { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-top: 15px; 
+        }
+        .row { display: flex; justify-content: center; margin: 5px 0; }
+        .btn { 
+            width: 60px; height: 60px; 
+            font-size: 24px; 
+            background: #444; color: white; 
+            border: none; cursor: pointer; 
+            border-radius: 10px;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -32,10 +33,12 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <p>Puntuación: <span id="score">0</span></p>
 
-    <!-- Controles táctiles más arriba -->
-    <div class="mobile-controls">
-        <button class="btn" onclick="changeDirection('up')">⬆️</button>
-        <div class="controls">
+    <!-- Controles táctiles (fuera del canvas) -->
+    <div class="controls">
+        <div class="row">
+            <button class="btn" onclick="changeDirection('up')">⬆️</button>
+        </div>
+        <div class="row">
             <button class="btn" onclick="changeDirection('left')">⬅️</button>
             <button class="btn" onclick="changeDirection('down')">⬇️</button>
             <button class="btn" onclick="changeDirection('right')">➡️</button>
@@ -53,8 +56,8 @@
         let score = 0;
 
         // Cargar sonidos
-        const eatSound = new Audio('comer.mp3');
-        const gameOverSound = new Audio('gameover.mp3');
+        const eatSound = new Audio('https://www.fesliyanstudios.com/play-mp3/641'); // Sonido al comer
+        const gameOverSound = new Audio('https://www.fesliyanstudios.com/play-mp3/666'); // Sonido al perder
 
         function draw() {
             ctx.fillStyle = "black";
