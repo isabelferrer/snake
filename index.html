@@ -25,11 +25,12 @@
             max-width: 400px;
             height: auto;
         }
-        .controls, .difficulty { 
+        p { font-size: 14px; }
+        .controls { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-top: 5px;
+            margin-top: 10px;
             user-select: none;
         }
         .row { display: flex; justify-content: center; margin: 3px 0; }
@@ -41,16 +42,6 @@
             border-radius: 10px;
             touch-action: manipulation;
         }
-        .difficulty button {
-            font-size: 14px;
-            margin: 5px;
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            background: #ff5722;
-            color: white;
-            border-radius: 5px;
-        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
@@ -59,15 +50,7 @@
     <h1>Snake Retro 🐍</h1>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <p>Puntuación: <span id="score">0</span></p>
-
-    <!-- Selector de dificultad -->
-    <div class="difficulty">
-        <p>Selecciona la dificultad:</p>
-        <button onclick="setDifficulty(300, 'Fácil')">Fácil</button>
-        <button onclick="setDifficulty(200, 'Normal')">Normal</button>
-        <button onclick="setDifficulty(120, 'Difícil')">Difícil</button>
-        <p>Dificultad actual: <span id="difficulty-level">Normal</span></p>
-    </div>
+    <p>Nivel: <span id="level">1 (Fácil)</span></p>
 
     <!-- Controles táctiles -->
     <div class="controls">
@@ -91,7 +74,8 @@
         let nextDirection = direction;
         let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
         let score = 0;
-        let gameSpeed = 200;
+        let level = 1;
+        let gameSpeed = 300;
         let game;
 
         // Cargar sonidos
@@ -127,6 +111,10 @@
                 document.getElementById("score").innerText = score;
                 eatSound.play();
                 food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
+
+                // Ajustar dificultad automáticamente
+                if (score === 30) setDifficulty(200, "2 (Normal)");
+                if (score === 50) setDifficulty(120, "3 (Difícil)");
             } else {
                 snake.pop();
             }
@@ -161,14 +149,15 @@
             else if (dir === "RIGHT" && direction !== "LEFT") nextDirection = "RIGHT";
         }
 
-        function setDifficulty(speed, name) {
+        function setDifficulty(speed, levelText) {
             clearInterval(game);
             gameSpeed = speed;
-            document.getElementById("difficulty-level").innerText = name;
+            level = levelText;
+            document.getElementById("level").innerText = levelText;
             game = setInterval(draw, gameSpeed);
         }
 
-        // Iniciar el juego en dificultad Normal por defecto
+        // Iniciar el juego
         game = setInterval(draw, gameSpeed);
     </script>
 
