@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Retro 🐍🎮</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Press Start 2P', cursive; text-align: center; background: #222; color: white; }
+        canvas { display: block; margin: 20px auto; background: url('fondo.png') center/cover; border: 4px solid #fff; }
+        .controls { display: flex; justify-content: center; margin-top: 10px; }
+        .btn { width: 50px; height: 50px; margin: 5px; font-size: 24px; background: #555; color: white; border: none; cursor: pointer; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1>Snake Retro 🐍</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <p>Puntuación: <span id="score">0</span></p>
+
+    <!-- Controles táctiles -->
+    <div class="controls">
+        <button class="btn" onclick="changeDirection('up')">⬆️</button>
+    </div>
+    <div class="controls">
+        <button class="btn" onclick="changeDirection('left')">⬅️</button>
+        <button class="btn" onclick="changeDirection('down')">⬇️</button>
+        <button class="btn" onclick="changeDirection('right')">➡️</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const box = 20;
+        let snake = [{x: 10 * box, y: 10 * box}];
+        let direction = "RIGHT";
+        let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
+        let score = 0;
+
+        // Cargar sonidos
+        const eatSound = new Audio('comer.mp3');
+        const gameOverSound = new Audio('gameover.mp3');
+
+        function draw() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar comida
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, box, box);
+
+            // Dibujar serpiente
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = i === 0 ? "lime" : "green";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Mover la serpiente
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if (direction === "LEFT") snakeX -= box;
+            if (direction === "UP") snakeY -= box;
+            if (direction === "RIGHT") snakeX += box;
+            if (direction === "DOWN") snakeY += box;
+
+            // Comprobar si come comida
+            if (snakeX === food.x && snakeY === food.y) {
+                score++;
+                document.getElementById("score").innerText = score;
+                eatSound.play();
+                food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
+            } else {
+                snake.pop(); // Eliminar la última parte de la cola
+            }
+
+            // Nuevo segmento en la cabeza
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Comprobar colisión
+            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                gameOverSound.play();
+                alert("¡Game Over! 🕹️ Tu puntuación: " + score);
+                location.reload();
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function collision(head, array) {
+            return array.some(segment => segment.x === head.x && segment.y === head.y);
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+            else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+            else if (event.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+            else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+        });
+
+        // Función para botones táctiles
+        function changeDirection(dir) {
+            if (dir === "up" && direction !== "DOWN") direction = "UP";
+            else if (dir === "down" && direction !== "UP") direction = "DOWN";
+            else if (dir === "left" && direction !== "RIGHT") direction = "LEFT";
+            else if (dir === "right" && direction !== "LEFT") direction = "RIGHT";
+        }
+
+        let game = setInterval(draw, 150);
+    </script>
+
+</body>
+</html>
