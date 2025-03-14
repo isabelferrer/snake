@@ -6,25 +6,40 @@
     <title>Snake Retro 🐍🎮</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Press Start 2P', cursive; text-align: center; background: #222; color: white; }
-        canvas { display: block; margin: 20px auto; background: url('fondo.png') center/cover; border: 4px solid #fff; }
-        
-        /* Ajuste de controles táctiles (fuera del canvas) */
+        body { 
+            font-family: 'Press Start 2P', cursive; 
+            text-align: center; 
+            background: #222; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Centrar en pantalla */
+        }
+        h1 { margin-bottom: 10px; font-size: 16px; } /* Ajuste en móviles */
+        canvas { 
+            background: url('fondo.png') center/cover; 
+            border: 4px solid #fff;
+            width: 90vw; /* Ajuste automático al ancho del dispositivo */
+            max-width: 400px;
+            height: auto;
+        }
         .controls { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-top: 15px; 
-            user-select: none; /* Evita selección accidental */
+            margin-top: 5px; /* Subimos los controles */
+            user-select: none;
         }
-        .row { display: flex; justify-content: center; margin: 5px 0; }
+        .row { display: flex; justify-content: center; margin: 3px 0; }
         .btn { 
             width: 60px; height: 60px; 
             font-size: 24px; 
             background: #444; color: white; 
             border: none; cursor: pointer; 
             border-radius: 10px;
-            touch-action: manipulation; /* Evita zoom en móvil */
+            touch-action: manipulation;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -35,7 +50,7 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <p>Puntuación: <span id="score">0</span></p>
 
-    <!-- Controles táctiles (fuera del canvas) -->
+    <!-- Controles táctiles (subidos más arriba) -->
     <div class="controls">
         <div class="row">
             <button class="btn" ontouchstart="changeDirection('up')">⬆️</button>
@@ -58,8 +73,8 @@
         let score = 0;
 
         // Cargar sonidos
-        const eatSound = new Audio('https://www.fesliyanstudios.com/play-mp3/641'); // Sonido al comer
-        const gameOverSound = new Audio('https://www.fesliyanstudios.com/play-mp3/666'); // Sonido al perder
+        const eatSound = new Audio('https://www.fesliyanstudios.com/play-mp3/641');
+        const gameOverSound = new Audio('https://www.fesliyanstudios.com/play-mp3/666');
 
         function draw() {
             ctx.fillStyle = "black";
@@ -75,7 +90,6 @@
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
             }
 
-            // Mover la serpiente
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
 
@@ -84,20 +98,17 @@
             if (direction === "RIGHT") snakeX += box;
             if (direction === "DOWN") snakeY += box;
 
-            // Comprobar si come comida
             if (snakeX === food.x && snakeY === food.y) {
                 score++;
                 document.getElementById("score").innerText = score;
                 eatSound.play();
                 food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
             } else {
-                snake.pop(); // Eliminar la última parte de la cola
+                snake.pop();
             }
 
-            // Nuevo segmento en la cabeza
             let newHead = { x: snakeX, y: snakeY };
 
-            // Comprobar colisión
             if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
                 clearInterval(game);
                 gameOverSound.play();
@@ -119,7 +130,6 @@
             else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
         });
 
-        // Función para botones táctiles
         function changeDirection(dir) {
             if (dir === "up" && direction !== "DOWN") direction = "UP";
             else if (dir === "down" && direction !== "UP") direction = "DOWN";
@@ -127,8 +137,7 @@
             else if (dir === "right" && direction !== "LEFT") direction = "RIGHT";
         }
 
-        // Reducimos la velocidad para mejor experiencia (de 200ms a 250ms)
-        let game = setInterval(draw, 250);
+        let game = setInterval(draw, 270);
     </script>
 
 </body>
