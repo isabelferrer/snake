@@ -15,21 +15,21 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh; /* Centrar en pantalla */
+            height: 100vh;
         }
-        h1 { margin-bottom: 10px; font-size: 16px; } /* Ajuste en móviles */
+        h1 { margin-bottom: 10px; font-size: 16px; }
         canvas { 
             background: url('fondo.png') center/cover; 
             border: 4px solid #fff;
-            width: 90vw; /* Ajuste automático al ancho del dispositivo */
+            width: 90vw;
             max-width: 400px;
             height: auto;
         }
-        .controls { 
+        .controls, .difficulty { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-top: 5px; /* Subimos los controles */
+            margin-top: 5px;
             user-select: none;
         }
         .row { display: flex; justify-content: center; margin: 3px 0; }
@@ -41,6 +41,16 @@
             border-radius: 10px;
             touch-action: manipulation;
         }
+        .difficulty button {
+            font-size: 14px;
+            margin: 5px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            background: #ff5722;
+            color: white;
+            border-radius: 5px;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
@@ -50,15 +60,24 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <p>Puntuación: <span id="score">0</span></p>
 
-    <!-- Controles táctiles (subidos más arriba) -->
+    <!-- Selector de dificultad -->
+    <div class="difficulty">
+        <p>Selecciona la dificultad:</p>
+        <button onclick="setDifficulty(300, 'Fácil')">Fácil</button>
+        <button onclick="setDifficulty(200, 'Normal')">Normal</button>
+        <button onclick="setDifficulty(120, 'Difícil')">Difícil</button>
+        <p>Dificultad actual: <span id="difficulty-level">Normal</span></p>
+    </div>
+
+    <!-- Controles táctiles -->
     <div class="controls">
         <div class="row">
-            <button class="btn" ontouchstart="changeDirection('up')">⬆️</button>
+            <button class="btn" ontouchstart="changeDirection('UP')">⬆️</button>
         </div>
         <div class="row">
-            <button class="btn" ontouchstart="changeDirection('left')">⬅️</button>
-            <button class="btn" ontouchstart="changeDirection('down')">⬇️</button>
-            <button class="btn" ontouchstart="changeDirection('right')">➡️</button>
+            <button class="btn" ontouchstart="changeDirection('LEFT')">⬅️</button>
+            <button class="btn" ontouchstart="changeDirection('DOWN')">⬇️</button>
+            <button class="btn" ontouchstart="changeDirection('RIGHT')">➡️</button>
         </div>
     </div>
 
@@ -69,8 +88,11 @@
         const box = 20;
         let snake = [{x: 10 * box, y: 10 * box}];
         let direction = "RIGHT";
+        let nextDirection = direction;
         let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
         let score = 0;
+        let gameSpeed = 200;
+        let game;
 
         // Cargar sonidos
         const eatSound = new Audio('https://www.fesliyanstudios.com/play-mp3/641');
@@ -89,6 +111,8 @@
                 ctx.fillStyle = i === 0 ? "lime" : "green";
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
             }
+
+            direction = nextDirection; // Evita movimientos ilegales
 
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
@@ -124,20 +148,28 @@
         }
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
-            else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
-            else if (event.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
-            else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+            if (event.key === "ArrowUp" && direction !== "DOWN") nextDirection = "UP";
+            else if (event.key === "ArrowDown" && direction !== "UP") nextDirection = "DOWN";
+            else if (event.key === "ArrowLeft" && direction !== "RIGHT") nextDirection = "LEFT";
+            else if (event.key === "ArrowRight" && direction !== "LEFT") nextDirection = "RIGHT";
         });
 
         function changeDirection(dir) {
-            if (dir === "up" && direction !== "DOWN") direction = "UP";
-            else if (dir === "down" && direction !== "UP") direction = "DOWN";
-            else if (dir === "left" && direction !== "RIGHT") direction = "LEFT";
-            else if (dir === "right" && direction !== "LEFT") direction = "RIGHT";
+            if (dir === "UP" && direction !== "DOWN") nextDirection = "UP";
+            else if (dir === "DOWN" && direction !== "UP") nextDirection = "DOWN";
+            else if (dir === "LEFT" && direction !== "RIGHT") nextDirection = "LEFT";
+            else if (dir === "RIGHT" && direction !== "LEFT") nextDirection = "RIGHT";
         }
 
-        let game = setInterval(draw, 270);
+        function setDifficulty(speed, name) {
+            clearInterval(game);
+            gameSpeed = speed;
+            document.getElementById("difficulty-level").innerText = name;
+            game = setInterval(draw, gameSpeed);
+        }
+
+        // Iniciar el juego en dificultad Normal por defecto
+        game = setInterval(draw, gameSpeed);
     </script>
 
 </body>
