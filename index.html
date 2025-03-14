@@ -33,7 +33,7 @@
             margin-top: 10px;
             user-select: none;
         }
-        .row { display: flex; justify-content: center; margin: 3px 0; }
+        .row { display: flex; justify-content: center; margin: 5px 0; }
         .btn { 
             width: 60px; height: 60px; 
             font-size: 24px; 
@@ -55,12 +55,12 @@
     <!-- Controles táctiles -->
     <div class="controls">
         <div class="row">
-            <button class="btn" ontouchstart="changeDirection('UP')">⬆️</button>
+            <button class="btn" id="btnUp">⬆️</button>
         </div>
         <div class="row">
-            <button class="btn" ontouchstart="changeDirection('LEFT')">⬅️</button>
-            <button class="btn" ontouchstart="changeDirection('DOWN')">⬇️</button>
-            <button class="btn" ontouchstart="changeDirection('RIGHT')">➡️</button>
+            <button class="btn" id="btnLeft">⬅️</button>
+            <button class="btn" id="btnDown">⬇️</button>
+            <button class="btn" id="btnRight">➡️</button>
         </div>
     </div>
 
@@ -78,7 +78,6 @@
         let gameSpeed = 300;
         let game;
 
-        // Cargar sonidos
         const eatSound = new Audio('https://www.fesliyanstudios.com/play-mp3/641');
         const gameOverSound = new Audio('https://www.fesliyanstudios.com/play-mp3/666');
 
@@ -86,17 +85,15 @@
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar comida
             ctx.fillStyle = "red";
             ctx.fillRect(food.x, food.y, box, box);
 
-            // Dibujar serpiente
             for (let i = 0; i < snake.length; i++) {
                 ctx.fillStyle = i === 0 ? "lime" : "green";
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
             }
 
-            direction = nextDirection; // Evita movimientos ilegales
+            direction = nextDirection;
 
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
@@ -112,7 +109,6 @@
                 eatSound.play();
                 food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
 
-                // Ajustar dificultad automáticamente
                 if (score === 30) setDifficulty(200, "2 (Normal)");
                 if (score === 50) setDifficulty(120, "3 (Difícil)");
             } else {
@@ -157,7 +153,12 @@
             game = setInterval(draw, gameSpeed);
         }
 
-        // Iniciar el juego
+        // Mejora en controles táctiles
+        document.getElementById("btnUp").addEventListener("pointerdown", () => changeDirection("UP"));
+        document.getElementById("btnDown").addEventListener("pointerdown", () => changeDirection("DOWN"));
+        document.getElementById("btnLeft").addEventListener("pointerdown", () => changeDirection("LEFT"));
+        document.getElementById("btnRight").addEventListener("pointerdown", () => changeDirection("RIGHT"));
+
         game = setInterval(draw, gameSpeed);
     </script>
 
